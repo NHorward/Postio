@@ -29,9 +29,19 @@ public class Postio {
         final GpioController gpio = GpioFactory.getInstance();
 
         // provision gpio pin #02 as an input pin with its internal pull down resistor enabled
-        final GpioPinDigitalInput knop1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP);
-        final GpioPinDigitalInput knop2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP);
-        final GpioPinDigitalInput knop3 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_00, PinPullResistance.PULL_UP);
+        final GpioPinDigitalInput knop1 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_01, PinPullResistance.PULL_UP);
+        final GpioPinDigitalInput knop2 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP);
+        final GpioPinDigitalInput knop3 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP);
+         final GpioPinDigitalInput knop4 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_04, PinPullResistance.PULL_UP);
+         final GpioPinDigitalInput knop5 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_05, PinPullResistance.PULL_UP);
+        final GpioPinDigitalInput knop6 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_06, PinPullResistance.PULL_UP);
+        final GpioPinDigitalInput knop7 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_07, PinPullResistance.PULL_UP);
+         final GpioPinDigitalInput knop8 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_08, PinPullResistance.PULL_UP);
+         final GpioPinDigitalInput knop9 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_09, PinPullResistance.PULL_UP);
+         final GpioPinDigitalInput knop0 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_00, PinPullResistance.PULL_UP);
+         final GpioPinDigitalInput knopX = gpio.provisionDigitalInputPin(RaspiPin.GPIO_10, PinPullResistance.PULL_UP);
+         final GpioPinDigitalInput knopV = gpio.provisionDigitalInputPin(RaspiPin.GPIO_11, PinPullResistance.PULL_UP);
+        
         // set shutdown state for this input pin
         knop1.setShutdownOptions(true);
 
@@ -78,11 +88,147 @@ public class Postio {
                     }
                 }
         };
+          
+          
+            GpioPinListenerDigital knopLuisteraar4 = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "4";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
+            
+              GpioPinListenerDigital knopLuisteraar5 = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "5";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
+              
+                GpioPinListenerDigital knopLuisteraar6 = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "6";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
+                
+                  GpioPinListenerDigital knopLuisteraar7 = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "7";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
+                  
+                    GpioPinListenerDigital knopLuisteraar8 = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "8";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
+                    
+                      GpioPinListenerDigital knopLuisteraar9 = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "9";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
+                      
+                        GpioPinListenerDigital knopLuisteraar0 = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "0";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
+                        
+                          GpioPinListenerDigital knopLuisteraarX = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "X";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
+                          
+                            GpioPinListenerDigital knopLuisteraarV = new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                // display pin state on console
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+                
+                String status = event.getState().toString();
+                if(status.equals("HIGH")) {
+                        ingevoerdeCode += "V";
+                        System.out.println(ingevoerdeCode);
+                    }
+                }
+        };
         
          // create and register gpio pin listener
         knop1.addListener(knopLuisteraar1);
         knop2.addListener(knopLuisteraar2);
         knop3.addListener(knopLuisteraar3);
+        knop4.addListener(knopLuisteraar4);
+        knop5.addListener(knopLuisteraar5);
+        knop6.addListener(knopLuisteraar6);
+        knop7.addListener(knopLuisteraar7);
+        knop8.addListener(knopLuisteraar8);
+        knop9.addListener(knopLuisteraar9);
+        knop0.addListener(knopLuisteraar0);
+        knopX.addListener(knopLuisteraarX);
+        knopV.addListener(knopLuisteraarV);
 
         System.out.println(" ... complete the GPIO #02 circuit and see the listener feedback here in the console.");
 
