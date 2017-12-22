@@ -30,8 +30,8 @@ public class Hd44780 {
                                    27,           // LCD strobe pin
                                    25,            // LCD data bit 1
                                    24,            // LCD data bit 2
-                                   23,            // LCD data bit 3
-                                   22,            // LCD data bit 4
+                                   22,            // LCD data bit 3
+                                   21,            // LCD data bit 4
                                    0,            // LCD data bit 5 (set to 0 if using 4 bit communication)
                                    0,            // LCD data bit 6 (set to 0 if using 4 bit communication)
                                    0,            // LCD data bit 7 (set to 0 if using 4 bit communication)

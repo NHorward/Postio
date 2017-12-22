@@ -5,6 +5,7 @@
         <group>
             <file>file:/home/pi/NetBeansProjects/Postio/Postio/src/postio/Postio.java</file>
             <file>file:/home/pi/NetBeansProjects/Postio/Postio/src/postio/Hd44780.java</file>
+            <file>file:/home/pi/NetBeansProjects/Postio/Postio/src/postio/Servo.java</file>
         </group>
     </open-files>
 </project-private>

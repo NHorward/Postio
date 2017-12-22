@@ -21,6 +21,7 @@ public class Postio {
     
     public static String ingevoerdeCode = "code: ";
     public static Hd44780 display;
+    public static Servo lock;
     public static String juisteCode;
     public static boolean correct;
     public static boolean vPressed;
@@ -28,7 +29,8 @@ public class Postio {
     public static boolean post;
     
     public static void main(String[] args) throws InterruptedException {
-        display = new Hd44780(); 
+        display = new Hd44780();
+        lock = new Servo();
         display.clearLcd();
         juisteCode = "code: 123789";
         leesKnopjes();
@@ -68,7 +70,7 @@ public class Postio {
                 
                 //String status = event.getState().toString();
                
-                  System.out.println("klepje");
+                  //System.out.println("klepje");
                   post = true;
                 }
         };
@@ -85,7 +87,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         ingevoerdeCode += "1";
-                        
+
                     }
                 }
         };
@@ -100,7 +102,6 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         ingevoerdeCode += "2";
-                        
                     }
                 }
         };
@@ -307,8 +308,11 @@ public class Postio {
               if(vPressed && correct){
               display.writeFirstRow("code correct");
               display.writeSecondRow("mailbox is open");
+              lock.openLock();
+              Thread.sleep(3000);
+              lock.closeLock();
               //System.out.println("correct");
-              Thread.sleep(5000);
+              Thread.sleep(3000);
               vPressed = false;
               correct = false;
               ingevoerdeCode = "code: ";
@@ -317,7 +321,7 @@ public class Postio {
               display.writeFirstRow("code incorrect");
               display.writeSecondRow("try again");
               //System.out.println("incorrect");
-              Thread.sleep(5000);
+              Thread.sleep(3000);
               vPressed = false;
               ingevoerdeCode = "code: ";
             }
@@ -326,7 +330,7 @@ public class Postio {
               display.writeFirstRow("code incorrect");
               display.writeSecondRow("try again");
               //System.out.println("incorrect");
-              Thread.sleep(5000);
+              Thread.sleep(3000);
               vPressed = false;
               display.clearLcd();
               display.writeFirstRow(ingevoerdeCode);
@@ -334,6 +338,7 @@ public class Postio {
    
           else if(ingevoerdeCode.length() > 12){
               display.writeFirstRow("code too long");
+              Thread.sleep(3000);
               ingevoerdeCode = "code: ";
           }else{
              display.writeFirstRow(ingevoerdeCode);
