@@ -2,6 +2,14 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+
+
+Geraadpleegde bronnen code Raspberry Pi
+IoT Device Team 1
+
+Servo slot
+
+GitHub Pi4J, PWM Example, via https://github.com/Pi4J/pi4j/blob/master/pi4j-example/src/main/java/PwmExample.java Datum van raadpleging: 21 december 2017. 
  */
 package postio;
 import com.pi4j.io.gpio.*;
@@ -32,11 +40,11 @@ public class Servo {
     
     public void openLock(){
         pwm.setPwm(60);
-        gpio.shutdown();
+        
     }
     
     public void closeLock(){
         pwm.setPwm(95);
-        gpio.shutdown();
+        
     }
 }

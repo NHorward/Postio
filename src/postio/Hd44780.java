@@ -2,6 +2,22 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+
+
+Geraadpleegde bronnen code Raspberry Pi
+IoT Device Team 1
+
+LCD Scherm:
+
+Raspberry Pi Spy, LCD Module Control Using Python, via https://www.raspberrypi-spy.co.uk/2012/07/16x2-lcd-module-control-using-python/ Datum van raadpleging: 19 december 2017. 
+
+Elmicro, GDM1602a Datasheet https://elmicro.com/files/lcd/gdm1602a_datasheet.pdf Datum van raadpleging: 19 december 2017. 
+
+Pi4J GitHub, Wiring LCD Example https://github.com/Pi4J/pi4j/blob/master/pi4j-example/src/main/java/WiringPiLcdExample.java Datum van raadpleging: 19 december 2017. 
+
+Sparkfun, Datasheet LCD HD44780, via https://www.sparkfun.com/datasheets/LCD/HD44780.pdf Datum van raadpleging: 19 december 2017. 
+
+
  */
 package postio;
 import java.io.UnsupportedEncodingException;

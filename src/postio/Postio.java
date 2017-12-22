@@ -1,12 +1,35 @@
 /*
- * Pi4J Eventlistener http://pi4j.com/example/listener.html Datum van raadpleging: 19 december 2017
+Geraadpleegde bronnen code Raspberry Pi
+IoT Device Team 1
+
+Toetsenbord:
+
+O’reilly Raspberry Pi cookbook, Connecting a Push Switch, via http://razzpisampler.oreilly.com/ch07.html Datum van raadpleging: 19 december 2017. 
+
+The Pi4J Project, GPIO State Listener Example using Pi4J, via http://pi4j.com/example/listener.html Datum van raadpleging: 19 december 2017. 
+
+Level Up Lunch, Remover last character from String, via https://www.leveluplunch.com/java/examples/remove-last-character-from-string/  Datum van raadpleging: 20 december 2017. 
+
+Reed Switch Deur : 
+
+Raspberry Pi Stack Exchange, Reed Switch Wiring, via https://raspberrypi.stackexchange.com/questions/34947/reed-switch-wiring Datum van raadpleging: 21 december 2017. 
  */
 package postio;
+import postio.dao.ToegangscodeDAO;
+import postio.model.Toegangscode;
 import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
+import postio.dao.ToegangscodeDAO;
+import postio.model.Toegangscode;
+import postio.dao.OpeningDAO;
+import postio.model.Opening;
+import postio.dao.PostmeldingDAO;
+import postio.model.Postmelding;
+import java.util.Date;
 
 /**
  *
@@ -19,22 +42,53 @@ public class Postio {
      * @param args the command line arguments
      */
     
-    public static String ingevoerdeCode = "code: ";
+    public static String insertedCode = "";
     public static Hd44780 display;
     public static Servo lock;
-    public static String juisteCode;
+    public static ArrayList<Toegangscode> codes;
+    public static Toegangscode correctCode;
     public static boolean correct;
     public static boolean vPressed;
     public static boolean buttonPressed;
     public static boolean post;
+    public static boolean pressedTimer;
+    public static boolean postDelivered;
     
     public static void main(String[] args) throws InterruptedException {
         display = new Hd44780();
         lock = new Servo();
         display.clearLcd();
-        juisteCode = "code: 123789";
+        
+        getCodeFromDatabase();
         leesKnopjes();
          
+    }
+    
+    public static void timer() throws InterruptedException{
+        pressedTimer = true;
+        Thread.sleep(400);
+        pressedTimer = false;
+    }
+    
+    public static void timerPost() throws InterruptedException{
+        postDelivered = true;
+        Thread.sleep(400);
+        postDelivered = false;
+    }
+    
+    public static void getCodeFromDatabase(){
+        codes = ToegangscodeDAO.getToegangscodes();
+        for(Toegangscode currentCode : codes){
+            System.out.println(currentCode);
+        }   
+        
+    }
+    
+    public static void openDoor(){
+        lock.openLock();
+        Date currentTime = new Date();
+        Opening newOpening = new Opening(1, correctCode.getCode(), correctCode.getGebruikerId(), currentTime);
+        OpeningDAO.voegOpeningToe(newOpening);
     }
     
     public static void leesKnopjes() throws InterruptedException{
@@ -65,13 +119,20 @@ public class Postio {
         GpioPinListenerDigital klepLuisteraar = new GpioPinListenerDigital() {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                // display pin state on console
-                //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
-                
-                //String status = event.getState().toString();
-               
-                  //System.out.println("klepje");
+                if(!postDelivered){
+                    String status = event.getState().toString();
+                if(status.equals("HIGH")) {
                   post = true;
+                  Date currentTime = new Date();
+                  Postmelding newPostmelding = new Postmelding(1, currentTime);
+                  PostmeldingDAO.voegPostmeldingToe(newPostmelding);
+                    try {
+                        timerPost();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }}
+                  
                 }
         };
         
@@ -83,12 +144,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "1";
-
+                        insertedCode += "1";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
         
@@ -98,11 +165,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "2";
+                        insertedCode += "2";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
          
@@ -112,12 +186,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "3";
-                        
+                        insertedCode += "3";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
           
@@ -128,12 +208,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "4";
-                        
+                        insertedCode += "4";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
             
@@ -142,13 +228,19 @@ public class Postio {
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
-                
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "5";
-                        
+                        insertedCode += "5";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
+                
                 }
         };
               
@@ -158,12 +250,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "6";
-                        
+                        insertedCode += "6";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
                 
@@ -173,12 +271,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "7";
-                        
+                        insertedCode += "7";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
                   
@@ -188,12 +292,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "8";
-                        
+                        insertedCode += "8";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
                     
@@ -203,12 +313,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "9";
-                        
+                        insertedCode += "9";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
                       
@@ -218,12 +334,18 @@ public class Postio {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 
-                String status = event.getState().toString();
+                if(!pressedTimer){
+                    String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
-                        ingevoerdeCode += "0";
-                        
+                        insertedCode += "0";
+                        try {
+                            timer();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Postio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                }
                 }
         };
                         
@@ -232,21 +354,21 @@ public class Postio {
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
-                
+                if(!pressedTimer){
                 String status = event.getState().toString();
                 if(status.equals("HIGH")) {
                         buttonPressed = true;
                         String nieuweCode = null;
                         
-                        if(ingevoerdeCode != null && ingevoerdeCode.length() > 1) {
-                            nieuweCode = ingevoerdeCode.substring(0, ingevoerdeCode.length() - 1);
-                            ingevoerdeCode = nieuweCode;
+                        if(insertedCode != null && insertedCode.length() > 0) {
+                            nieuweCode = insertedCode.substring(0, insertedCode.length() - 1);
+                            insertedCode = nieuweCode;
                         }
                         
                         
                     
                         
-                    }
+                    }}
                 }
         };
                           
@@ -255,19 +377,26 @@ public class Postio {
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 // display pin state on console
                 //System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
-                
+                if(!pressedTimer){
                 String status = event.getState().toString();
                 if(status.equals("HIGH")) {
+                    getCodeFromDatabase();
                     buttonPressed = true;
                     vPressed = true;
-                        if(ingevoerdeCode.equals(juisteCode)){
+                   for(Toegangscode currentCode : codes){
+                     if(insertedCode.equals(currentCode.toString())){
                             correct = true;
+                            correctCode = currentCode;
+                            openDoor();
+                            break;
                         }else{
                             correct = false;
-                        }
+                        }  
+                   }
+                        
                         
                     }
-                }
+                }}
         };
         
          // create and register gpio pin listener
@@ -301,50 +430,49 @@ public class Postio {
           }
           else{
               //"code: " is 6 lang, max lengte wordt dus 12 (code 6 characters lang)
-          if(ingevoerdeCode.length() == 12){
+          if(insertedCode.length() == 6){
               display.writeSecondRow("Press V");
-              display.writeFirstRow(ingevoerdeCode);
+              display.writeFirstRow("code: " + insertedCode);
               //System.out.println("Press V");
               if(vPressed && correct){
               display.writeFirstRow("code correct");
               display.writeSecondRow("mailbox is open");
-              lock.openLock();
-              Thread.sleep(3000);
-              lock.closeLock();
-              //System.out.println("correct");
               Thread.sleep(3000);
               vPressed = false;
               correct = false;
-              ingevoerdeCode = "code: ";
+              insertedCode = "";
               buttonPressed = false;
+              Thread.sleep(17000);
+              lock.closeLock();
+              //System.out.println("correct");
                 }else if(vPressed && !correct){
               display.writeFirstRow("code incorrect");
               display.writeSecondRow("try again");
               //System.out.println("incorrect");
               Thread.sleep(3000);
               vPressed = false;
-              ingevoerdeCode = "code: ";
+              insertedCode = "";
             }
           }
-          else if(ingevoerdeCode.length() < 12 && vPressed){
+          else if(insertedCode.length() < 6 && vPressed){
               display.writeFirstRow("code incorrect");
               display.writeSecondRow("try again");
               //System.out.println("incorrect");
               Thread.sleep(3000);
               vPressed = false;
               display.clearLcd();
-              display.writeFirstRow(ingevoerdeCode);
+              display.writeFirstRow("code: " + insertedCode);
           }
    
-          else if(ingevoerdeCode.length() > 12){
+          else if(insertedCode.length() > 6){
               display.writeFirstRow("code too long");
               Thread.sleep(3000);
-              ingevoerdeCode = "code: ";
+              insertedCode = "";
           }else{
-             display.writeFirstRow(ingevoerdeCode);
+             display.writeFirstRow("code: " + insertedCode);
           }
           }  
-          //System.out.println(ingevoerdeCode);
+          //System.out.println(insertedCode);
         }
 
         // stop all GPIO activity/threads by shutting down the GPIO controller
