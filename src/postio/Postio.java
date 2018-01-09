@@ -58,7 +58,6 @@ public class Postio {
         display = new Hd44780();
         lock = new Servo();
         display.clearLcd();
-        
         getCodeFromDatabase();
         leesKnopjes();
          
@@ -149,6 +148,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "1";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -170,6 +170,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "2";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -191,6 +192,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "3";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -213,6 +215,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "4";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -233,6 +236,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "5";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -255,6 +259,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "6";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -276,6 +281,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "7";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -297,6 +303,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "8";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -318,6 +325,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "9";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -339,6 +347,7 @@ public class Postio {
                 if(status.equals("HIGH")) {
                     buttonPressed = true;
                         insertedCode += "0";
+                        System.out.println(insertedCode);
                         try {
                             timer();
                         } catch (InterruptedException ex) {
@@ -383,10 +392,16 @@ public class Postio {
                     getCodeFromDatabase();
                     buttonPressed = true;
                     vPressed = true;
+                    if(correct){
+                        lock.closeLock();
+                        correct = false;
+                        display.writeFirstRow("Welcome to");
+                        display.writeSecondRow("Postio");
+                    }
                    for(Toegangscode currentCode : codes){
                      if(insertedCode.equals(currentCode.toString())){
                             correct = true;
-                            correctCode = currentCode;
+                            correctCode = currentCode;                            
                             openDoor();
                             break;
                         }else{
@@ -422,32 +437,34 @@ public class Postio {
           Thread.sleep(500);
           display.clearLcd();
           if(!buttonPressed && !post){
-              display.writeFirstRow("welcome to");
+              display.writeFirstRow("Welcome to");
               display.writeSecondRow("Postio");
           }else if(!buttonPressed && post){
-              display.writeFirstRow("you've got");
-              display.writeSecondRow("mail");
+              display.writeFirstRow("You've got");
+              display.writeSecondRow("Mail");
           }
           else{
-              //"code: " is 6 lang, max lengte wordt dus 12 (code 6 characters lang)
+              //code bestaat uit 6 cijfers
           if(insertedCode.length() == 6){
               display.writeSecondRow("Press V");
-              display.writeFirstRow("code: " + insertedCode);
+              display.writeFirstRow("Code: " + insertedCode);
               //System.out.println("Press V");
               if(vPressed && correct){
-              display.writeFirstRow("code correct");
-              display.writeSecondRow("mailbox is open");
+              display.writeFirstRow("Code correct");
+              display.writeSecondRow("Mailbox is open");
               Thread.sleep(3000);
-              vPressed = false;
-              correct = false;
+              vPressed = false;              
               insertedCode = "";
               buttonPressed = false;
-              Thread.sleep(17000);
+              display.writeFirstRow("Mailbox is open");
+              display.writeSecondRow("Press V to close");
+              Thread.sleep(20000);
+              correct = false;
               lock.closeLock();
               //System.out.println("correct");
                 }else if(vPressed && !correct){
-              display.writeFirstRow("code incorrect");
-              display.writeSecondRow("try again");
+              display.writeFirstRow("Code incorrect");
+              display.writeSecondRow("Try again");
               //System.out.println("incorrect");
               Thread.sleep(3000);
               vPressed = false;
@@ -455,21 +472,21 @@ public class Postio {
             }
           }
           else if(insertedCode.length() < 6 && vPressed){
-              display.writeFirstRow("code incorrect");
-              display.writeSecondRow("try again");
+              display.writeFirstRow("Code incorrect");
+              display.writeSecondRow("Try again");
               //System.out.println("incorrect");
               Thread.sleep(3000);
               vPressed = false;
               display.clearLcd();
-              display.writeFirstRow("code: " + insertedCode);
+              display.writeFirstRow("Code: " + insertedCode);
           }
    
           else if(insertedCode.length() > 6){
-              display.writeFirstRow("code too long");
+              display.writeFirstRow("Code too long");
               Thread.sleep(3000);
               insertedCode = "";
           }else{
-             display.writeFirstRow("code: " + insertedCode);
+             display.writeFirstRow("Code: " + insertedCode);
           }
           }  
           //System.out.println(insertedCode);

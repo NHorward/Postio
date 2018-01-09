@@ -59,7 +59,18 @@ public class Hd44780 {
             System.out.println(" ==>> LCD INIT FAILED");
             return;
         }
+         // clear LCD
         Lcd.lcdClear(lcdHandle);
+        
+
+        // write line 1 to LCD
+        //Lcd.lcdHome(lcdHandle);
+        //Lcd.lcdPosition (lcdHandle, 0, 0) ;
+        //Lcd.lcdPuts (lcdHandle, "Hoiii Postio 123") ;
+
+        // write line 2 to LCD
+        //Lcd.lcdPosition (lcdHandle, 0, 1) ;
+        //Lcd.lcdPuts (lcdHandle, "----------------") ;
     }
     
     public void clearLcd(){
