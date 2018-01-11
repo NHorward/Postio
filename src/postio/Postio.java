@@ -32,6 +32,8 @@ import postio.dao.OpeningDAO;
 import postio.model.Opening;
 import postio.dao.PostmeldingDAO;
 import postio.model.Postmelding;
+import postio.dao.BrievenbusDAO;
+import postio.model.Brievenbus;
 
 
 /**
@@ -51,6 +53,9 @@ public class Postio {
     public static String insertedCode = "";
     public static Hd44780 display;
     public static Servo lock;
+    public static Brievenbus mailbox;
+    public static int brievenbusId = 1;
+    public static boolean open;
     
     public static void main(String[] args) throws InterruptedException {
         // Aanmaken instantie van de servo klasse (slot brievenbus)
@@ -85,6 +90,19 @@ public class Postio {
     // Alle correcte toegangscode uit de database ophalen
     public static void getCodeFromDatabase(){
         codes = ToegangscodeDAO.getToegangscodes(); 
+    }
+    
+    // Ophalen of brievenbus moet geopend worden of niet
+    public static boolean getMailboxOpenFromDatabase(){
+        mailbox = BrievenbusDAO.getBrievenbusById(brievenbusId);
+        open = mailbox.isBooleanOpen();
+        return open;
+    }
+    
+    // Boolean in database terug op false zetten
+    public static void updateMailboxOpenInDatabase(){
+        mailbox.setBooleanOpen(false);
+        BrievenbusDAO.updateBrievenbus(mailbox);
     }
     
     // Functie die de deur openmaakt
@@ -567,6 +585,24 @@ public class Postio {
         while(true) {
           // Gaat de thread even slapen
           Thread.sleep(500);
+          
+          
+          
+          // Als de boolean die meegegeven wordt met de brievenbus true is en geen correcte code ingegeven is
+          if(getMailboxOpenFromDatabase() && !correct){
+              // Wordt de brievenbus geopend
+              lock.openLock();              
+              // Als de brievenbus niet via de app opnieuw gesloten wordt, sluit hij automatisch na 20 seconden
+              // Thread even laten slapen
+              Thread.sleep(10000);
+              // Boolean terug op false zetten en versturen naar de database
+              updateMailboxOpenInDatabase();
+          }
+          // Als de boolean die meegegeven wordt met de brievenbus false is en geen correcte code ingegeven is
+          else if(!getMailboxOpenFromDatabase() && !correct){
+              // Blijft de brievenbus dicht
+              lock.closeLock();
+          }
           
           // LCD display leegmaken
           display.clearLcd();
